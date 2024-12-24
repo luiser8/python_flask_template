@@ -34,3 +34,10 @@ class authSrv:
     def destroySrv(self, user_id):
         if user_id:
             return self.users_auth_service.deleteSrv(user_id)
+
+    # def refreshSrv(self, user_id):
+    #     if user_id:
+    #         return self.users_auth_service.putSrv(user_id, {
+    #             "access_token": self.generate_token.generate(user_id)["access_token"],
+    #             "refresh_token": self.generate_token.generate(user_id)["refresh_token"]
+    #         })
