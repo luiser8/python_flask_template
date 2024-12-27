@@ -26,13 +26,13 @@ class authCtrl():
         if response:
             return jsonify(response), 200
 
-    # @auth.route('/api/auth/refresh', methods=['POST'])
-    # @authorize
-    # def refresh():
-    #     response = None
-    #     user_id = tokenJWTUtils().getTokenUserId(request.headers)["user_id"]
-    #     response = authSrv().refreshSrv(user_id)
-    #     if response:
-    #         return jsonify(response), 200
-    #     else:
-    #         return jsonify(response), 500
+    @auth.route('/api/auth/refresh', methods=['POST'])
+    @authorize
+    def refresh():
+        response = None
+        user_id = tokenJWTUtils().getTokenUserId(request.headers)["user_id"]
+        response = authSrv().refreshSrv(user_id)
+        if response:
+            return jsonify(response), 200
+        else:
+            return jsonify(response), 500

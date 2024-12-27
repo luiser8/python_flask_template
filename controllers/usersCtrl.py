@@ -45,3 +45,21 @@ class usersCtrl():
             return jsonify(save), 200
         else:
             return jsonify(save), 500
+
+    @users.route('/api/users/forgot_password/<string:email>', methods=['GET'])
+    def forgotPassword(email):
+        result = usersSrv().forgotPasswordSrv(email)
+        if result:
+            return jsonify(result), 200
+        else:
+            return jsonify(result), 404
+
+    @users.route('/api/users/change_password', methods=['POST'])
+    def changePassword():
+        data = request.get_json()
+        payload = { "code": data.get("code"), "email": data.get("email"), "newpassword": data.get("newpassword") }
+        result = usersSrv().changePasswordSrv(payload)
+        if result:
+            return jsonify(result), 200
+        else:
+            return jsonify(result), 404

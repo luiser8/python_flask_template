@@ -1,10 +1,15 @@
 from flask import flash
 from repository.repoSQL import repoSQL
 from middleware.hashPass import hash_password
+from services.usersForgotSrv import usersForgotSrv
+from services.mailerSendSrv import mailerSendSrv
 
 class usersSrv():
     def __init__(self):
         self.query_service = repoSQL('users', ['id', 'firstname', 'lastname', 'email', 'password', 'status'])
+        self.mailer_send_service = mailerSendSrv()
+        self.users_forgot_service = usersForgotSrv()
+        self.code = None
 
     def getAllSrv(self):
         return self.query_service.get_all()
@@ -49,6 +54,19 @@ class usersSrv():
             else:
                 flash('Error al actualizar el usuario')
             return result
+
+    def forgotPasswordSrv(self, payload):
+        if payload:
+            result = self.query_service.get_by_conditions({
+                "email": payload
+            })
+            if result and len(result) > 0 and result[0]["status"]:
+                self.code = self.mailer_send_service.sendSrv(result[0]["email"])
+                self.users_forgot_service.postSrv({
+                    "user_id": result[0]["id"],
+                    "code": self.code
+                })
+                return self.code
 
     def deleteSrv(self, id):
         if id:

@@ -1,7 +1,7 @@
 import os
 from middleware.tokenJWTUtils import tokenJWTUtils
 from repository.repoSQL import repoSQL
-from middleware.hashPass import decode_token, hash_password
+from middleware.hashPass import hash_password
 from services.usersAuth import usersAuthSrv
 
 class authSrv:
@@ -35,9 +35,15 @@ class authSrv:
         if user_id:
             return self.users_auth_service.deleteSrv(user_id)
 
-    # def refreshSrv(self, user_id):
-    #     if user_id:
-    #         return self.users_auth_service.putSrv(user_id, {
-    #             "access_token": self.generate_token.generate(user_id)["access_token"],
-    #             "refresh_token": self.generate_token.generate(user_id)["refresh_token"]
-    #         })
+    def refreshSrv(self, user_id):
+        if user_id:
+            result = self.query_service.get_by_id(user_id)
+            if result:
+                tokens = self.generate_token.generate(result)
+                if tokens and result:
+                    self.users_auth_service.postSrv({
+                        "user_id": result[0]["id"],
+                        "access_token": tokens["access_token"],
+                        "refresh_token": tokens["refresh_token"]
+                    })
+                return tokens
