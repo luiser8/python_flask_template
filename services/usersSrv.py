@@ -62,6 +62,14 @@ class usersSrv():
             })
             if result and len(result) > 0 and result[0]["status"]:
                 self.code = self.mailer_send_service.sendSrv(result[0]["email"])
+                exists = self.users_forgot_service.getByIdSrv(result[0]["id"])
+                if exists:
+                    self.users_forgot_service.putSrv(exists[0]["id"], {
+                        "user_id": result[0]["id"],
+                        "code": self.code,
+                        "status": False
+                    })
+                    return "El código de acceso ha sido enviado a su correo electrónico"
                 self.users_forgot_service.postSrv({
                     "user_id": result[0]["id"],
                     "code": self.code

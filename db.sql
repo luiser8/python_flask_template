@@ -36,6 +36,7 @@ CREATE TABLE users_forgot_password (
     id serial PRIMARY KEY,
     user_id integer NOT NULL UNIQUE,
     code varchar NOT NULL,
+    status boolean NULL DEFAULT true,
     createdat TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
     updatedat TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users (id)

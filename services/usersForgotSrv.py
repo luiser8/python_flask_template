@@ -1,3 +1,4 @@
+from flask import flash
 from repository.repoSQL import repoSQL
 
 class usersForgotSrv():
@@ -24,7 +25,29 @@ class usersForgotSrv():
         if user_forgot_exists:
             raise ValueError("User ID match stored user")
         else:
-            self.result =self.query_service.insert(user_data)
+            self.result = self.query_service.insert(user_data)
+
+        return self.result
+
+    def putSrv(self, id, payload):
+        if not payload:
+            raise ValueError("Payload is required")
+        user_data = {
+            "user_id": payload["user_id"],
+            "code": payload["code"],
+            "status": payload["status"]
+        }
+        if id:
+            user_data["user_id"] = payload["user_id"]
+        if "status" in payload:
+            user_data["status"] = payload["status"]
+
+        self.result = self.query_service.update(id, user_data)
+
+        if self.result:
+            flash("User updated")
+        else:
+            flash("User error updating")
 
         return self.result
 
