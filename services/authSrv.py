@@ -29,7 +29,9 @@ class authSrv:
                         "access_token": tokens["access_token"],
                         "refresh_token": tokens["refresh_token"]
                     })
-                return tokens
+                    return tokens
+            else:
+                return "User not found"
 
     def destroySrv(self, user_id):
         if user_id:

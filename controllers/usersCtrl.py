@@ -16,15 +16,11 @@ class usersCtrl():
         return jsonify(usersSrv().getByIdSrv(id))
 
     @users.route('/api/users/post', methods=['POST'])
-    @authorize
     def post():
         data = request.get_json()
         payload = { "firstname": data.get("firstname"), "lastname": data.get("lastname"), "email": data.get("email"), "password": data.get("password") }
         save = usersSrv().postSrv(payload)
-        if save:
-            return jsonify(save), 201
-        else:
-            return jsonify(save), 500
+        return jsonify(save), save["status"]
 
     @users.route('/api/users/put/<int:id>', methods=['PUT'])
     @authorize

@@ -4,12 +4,17 @@ from repository.repoSQL import repoSQL
 class usersForgotSrv():
     def __init__(self):
         self.result = None
-        self.query_service = repoSQL('users_forgot_password', ['id', 'user_id', 'code'])
+        self.query_service = repoSQL('users_forgot_password', ['id', 'user_id', 'code', 'createdat', 'status'])
 
     def getByIdSrv(self, id):
         return self.query_service.get_by_conditions({
-                "user_id": id
-            })
+            "user_id": id
+        })
+
+    def getByCodeSrv(self, code):
+        return self.query_service.get_by_conditions({
+            "code": code
+        })
 
     def postSrv(self, payload):
         if not payload:
@@ -22,7 +27,7 @@ class usersForgotSrv():
 
         user_forgot_exists = self.getByIdSrv(payload["user_id"])
 
-        if user_forgot_exists:
+        if user_forgot_exists and user_forgot_exists[0]["status"]:
             raise ValueError("User ID match stored user")
         else:
             self.result = self.query_service.insert(user_data)

@@ -8,8 +8,8 @@ class usersAuthSrv():
 
     def getByIdSrv(self, id):
         return self.query_service.get_by_conditions({
-                "user_id": id
-            })
+            "user_id": id
+        })
 
     def postSrv(self, payload):
         if not payload:
@@ -38,7 +38,7 @@ class usersAuthSrv():
             user = self.getByIdSrv(id)
             result = self.query_service.delete(user[0]["id"])
             if result:
-                flash('Tokens de Usuario eliminado exitosamente')
+                flash('Tokens to users deleting')
             else:
-                flash('Error al eliminar los tokens del usuario')
+                flash('Error deleting user tokens')
             return result

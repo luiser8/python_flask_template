@@ -13,7 +13,7 @@ def authorize(f):
             token = request.headers["Authorization"].split()[1]
 
         if not token:
-            return jsonify({"message": "no autorizado"}), 401
+             jsonify({"message": "not authorized"}), 401
 
         try:
             secret_key = os.getenv("SECRET_KEY")
@@ -22,12 +22,12 @@ def authorize(f):
             g.user = data
 
             if not users_auth_service.getByIdSrv(g.user["id"]):
-                return jsonify({"message": "no autorizado"}), 401
+                return jsonify({"message": "not authorized"}), 401
 
         except jwt.ExpiredSignatureError:
-            return jsonify({"message": "token expirado"}), 401
+            return jsonify({"message": "token expired"}), 401
         except jwt.InvalidTokenError:
-            return jsonify({"message": "token invalido"}), 401
+             jsonify({"message": "invalid token"}), 401
 
         return f(*args, **kwargs)
 

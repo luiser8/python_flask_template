@@ -1,4 +1,4 @@
-create database glucose_tracker_db;
+CREATE DATABASE glucose_tracker_db;
 
 CREATE TABLE users (
     id serial PRIMARY KEY,
@@ -34,7 +34,7 @@ CREATE TABLE users_auth (
 
 CREATE TABLE users_forgot_password (
     id serial PRIMARY KEY,
-    user_id integer NOT NULL UNIQUE,
+    user_id integer NOT NULL,
     code varchar NOT NULL,
     status boolean NULL DEFAULT true,
     createdat TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
