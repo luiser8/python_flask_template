@@ -12,10 +12,7 @@ class authCtrl():
         data = request.get_json()
         payload = { "email": data.get("email"), "password": data.get("password") }
         response = authSrv().loginSrv(payload)
-        if response:
-            return jsonify(response), 200
-        else:
-            return jsonify(response), 401
+        return jsonify(response), response["status"]
 
     @auth.route('/api/auth/logout', methods=['POST'])
     @authorize
@@ -23,8 +20,7 @@ class authCtrl():
         response = None
         user_id = tokenJWTUtils().getTokenUserId(request.headers)["user_id"]
         response = authSrv().destroySrv(user_id)
-        if response:
-            return jsonify(response), 200
+        return jsonify(response), response["status"]
 
     @auth.route('/api/auth/refresh', methods=['POST'])
     @authorize
@@ -32,7 +28,4 @@ class authCtrl():
         response = None
         user_id = tokenJWTUtils().getTokenUserId(request.headers)["user_id"]
         response = authSrv().refreshSrv(user_id)
-        if response:
-            return jsonify(response), 200
-        else:
-            return jsonify(response), 500
+        return jsonify(response), response["status"]

@@ -1,5 +1,6 @@
 from flask import flash
 from repository.repoSQL import repoSQL
+from middleware.responseHttpUtils import responseHttpUtils
 
 class usersAuthSrv():
     def __init__(self):
@@ -7,13 +8,14 @@ class usersAuthSrv():
         self.query_service = repoSQL('users_auth', ['id', 'user_id', 'access_token', 'refresh_token'])
 
     def getByIdSrv(self, id):
-        return self.query_service.get_by_conditions({
+        response = self.query_service.get_by_conditions({
             "user_id": id
         })
+        return responseHttpUtils().response(None, None, response)
 
     def postSrv(self, payload):
         if not payload:
-            raise ValueError("Payload is required")
+            return responseHttpUtils().response("Payload is required", None, None)
 
         user_data = {
             "user_id": payload["user_id"],
@@ -27,18 +29,18 @@ class usersAuthSrv():
             if payload["user_id"] == user_exists[0]["user_id"]:
                 self.result =self.query_service.update(user_exists[0]["id"], user_data)
             else:
-                raise ValueError("User ID does not match stored user")
+                return responseHttpUtils().response("User ID does not match stored user", None, None)
         else:
             self.result =self.query_service.insert(user_data)
 
-        return self.result
+        return responseHttpUtils().response(None, None, self.result)
 
     def deleteSrv(self, id):
         if id:
             user = self.getByIdSrv(id)
             result = self.query_service.delete(user[0]["id"])
             if result:
-                flash('Tokens to users deleting')
-            else:
-                flash('Error deleting user tokens')
-            return result
+                return responseHttpUtils().response("Tokens to users deleting", None, None)
+            return responseHttpUtils().response("Error deleting user tokens", None, None)
+        else:
+            return responseHttpUtils().response(None, None, result)

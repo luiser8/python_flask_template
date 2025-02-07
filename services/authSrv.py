@@ -1,5 +1,6 @@
 import os
 from middleware.tokenJWTUtils import tokenJWTUtils
+from middleware.responseHttpUtils import responseHttpUtils
 from repository.repoSQL import repoSQL
 from middleware.hashPass import hash_password
 from services.usersAuth import usersAuthSrv
@@ -29,13 +30,14 @@ class authSrv:
                         "access_token": tokens["access_token"],
                         "refresh_token": tokens["refresh_token"]
                     })
-                    return tokens
+                    return responseHttpUtils().response("Token for auth", 200, tokens)
             else:
-                return "User not found"
+                return responseHttpUtils().response("User not found", 401)
 
     def destroySrv(self, user_id):
         if user_id:
-            return self.users_auth_service.deleteSrv(user_id)
+            response = self.users_auth_service.deleteSrv(user_id)
+            return responseHttpUtils().response("Tokens destroy", 200, response)
 
     def refreshSrv(self, user_id):
         if user_id:
@@ -48,4 +50,4 @@ class authSrv:
                         "access_token": tokens["access_token"],
                         "refresh_token": tokens["refresh_token"]
                     })
-                return tokens
+                return responseHttpUtils().response("Token refresh for auth", 200, tokens)

@@ -1,5 +1,6 @@
 from flask import flash
 from repository.repoSQL import repoSQL
+from middleware.responseHttpUtils import responseHttpUtils
 
 class usersForgotSrv():
     def __init__(self):
@@ -7,18 +8,20 @@ class usersForgotSrv():
         self.query_service = repoSQL('users_forgot_password', ['id', 'user_id', 'code', 'createdat', 'status'])
 
     def getByIdSrv(self, id):
-        return self.query_service.get_by_conditions({
+        response = self.query_service.get_by_conditions({
             "user_id": id
         })
+        return responseHttpUtils().response(None, None, response)
 
     def getByCodeSrv(self, code):
-        return self.query_service.get_by_conditions({
+        response = self.query_service.get_by_conditions({
             "code": code
         })
+        return responseHttpUtils().response(None, None, response)
 
     def postSrv(self, payload):
         if not payload:
-            raise ValueError("Payload is required")
+            return responseHttpUtils().response("Payload is required", None, None)
 
         user_data = {
             "user_id": payload["user_id"],
@@ -28,7 +31,7 @@ class usersForgotSrv():
         user_forgot_exists = self.getByIdSrv(payload["user_id"])
 
         if user_forgot_exists and user_forgot_exists[0]["status"]:
-            raise ValueError("User ID match stored user")
+            return responseHttpUtils().response("User ID match stored user", None, None)
         else:
             self.result = self.query_service.insert(user_data)
 
@@ -36,7 +39,7 @@ class usersForgotSrv():
 
     def putSrv(self, id, payload):
         if not payload:
-            raise ValueError("Payload is required")
+            return responseHttpUtils().response("Payload is required", None, None)
         user_data = {
             "user_id": payload["user_id"],
             "code": payload["code"],
@@ -50,13 +53,11 @@ class usersForgotSrv():
         self.result = self.query_service.update(id, user_data)
 
         if self.result:
-            flash("User updated")
-        else:
-            flash("User error updating")
-
-        return self.result
+            return responseHttpUtils().response(None, None, self.result)
+        return responseHttpUtils().response("User error updating", None, None)
 
     def deleteSrv(self, id):
         if id:
             user = self.getByIdSrv(id)
-            return self.query_service.delete(user[0]["id"])
+            response = self.query_service.delete(user[0]["id"])
+            return responseHttpUtils().response(None, None, response)

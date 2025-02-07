@@ -13,10 +13,18 @@ class usersSrv():
         self.code = None
 
     def getAllSrv(self):
-        return self.query_service.get_all()
+        response = self.query_service.get_all()
+        if response:
+            return responseHttpUtils().response("Users successfully", 200, response)
+        else:
+            return responseHttpUtils().response("Error listing users", 400, response)
 
     def getByIdSrv(self, id):
-        return self.query_service.get_by_id(id)
+        response = self.query_service.get_by_id(id)
+        if response:
+            return responseHttpUtils().response("User by id successfully", 200, response)
+        else:
+            return responseHttpUtils().response("Error user not found", 404, response)
 
     def postSrv(self, payload):
         if payload:
@@ -56,9 +64,9 @@ class usersSrv():
                 user_data["status"] = payload["status"]
             result = self.query_service.update(id, user_data)
             if result:
-                return "User updated successfully"
+                return responseHttpUtils().response("User updated successfully", 200, result)
             else:
-                return "Error updating user"
+                return responseHttpUtils().response("Error updating user", 400, result)
 
     def forgotPasswordSrv(self, payload):
         if payload:
@@ -76,15 +84,17 @@ class usersSrv():
                             "code": exists[0]["code"],
                             "status": False
                         })
-                        return "Recovery code expired"
-                    return "The access code has been sent to your email"
+                        return responseHttpUtils().response("Recovery code expired", 400)
+                    return responseHttpUtils().response("The access code has been sent to your email", 200)
                 self.users_forgot_service.postSrv({
                     "user_id": result[0]["id"],
                     "code": self.code
                 })
             else:
-                return "Email not found"
-            return self.code
+                return responseHttpUtils().response("Email not found", 404)
+            return responseHttpUtils().response("Code for recovery", 200, self.code)
+        else:
+            return responseHttpUtils().response("Email is required", 400)
 
     def changePasswordSrv(self, payload):
         if payload:
@@ -105,17 +115,17 @@ class usersSrv():
                             "password": hash_password(payload["newpassword"])
                         }
                         self.query_service.update(result[0]["id"], user_data)
-                        return "Recovery password changed"
-                    return "Recovery code not expired"
+                        return responseHttpUtils().response("Recovery password changed", 200)
+                    return responseHttpUtils().response("Recovery code expired", 400)
                 else :
-                    return "Recovery code not found"
+                    return responseHttpUtils().response("Recovery code not found", 404)
             else:
-                return "Email not found"
+                return responseHttpUtils().response("Email not found", 404)
 
     def deleteSrv(self, id):
         if id:
             result = self.query_service.delete(id)
             if result:
-                return "User successfully deleted"
+                return responseHttpUtils().response("User successfully deleted", 200)
             else:
-                return "User deleted error"
+                return responseHttpUtils().response("User deleted error", 400)

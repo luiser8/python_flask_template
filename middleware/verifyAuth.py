@@ -3,6 +3,7 @@ from flask import request, jsonify, g
 import jwt
 import os
 from services.usersAuth import usersAuthSrv
+from middleware.responseHttpUtils import responseHttpUtils
 
 def authorize(f):
     @wraps(f)
@@ -13,7 +14,7 @@ def authorize(f):
             token = request.headers["Authorization"].split()[1]
 
         if not token:
-             jsonify({"message": "not authorized"}), 401
+            jsonify(responseHttpUtils().response("Not authorized", 401, None)), 401
 
         try:
             secret_key = os.getenv("SECRET_KEY")
@@ -22,12 +23,12 @@ def authorize(f):
             g.user = data
 
             if not users_auth_service.getByIdSrv(g.user["id"]):
-                return jsonify({"message": "not authorized"}), 401
+                return jsonify(responseHttpUtils().response("Not authorized", 401, None)), 401
 
         except jwt.ExpiredSignatureError:
-            return jsonify({"message": "token expired"}), 401
+            return jsonify(responseHttpUtils().response("Token expired", 401, None)), 401
         except jwt.InvalidTokenError:
-             jsonify({"message": "invalid token"}), 401
+            jsonify(responseHttpUtils().response("Invalid token", 401, None)), 401
 
         return f(*args, **kwargs)
 

@@ -9,12 +9,14 @@ class publicationsCtrl():
     @measurements.route('/api/measurements/get', methods=['GET'])
     @authorize
     def getAll():
-        return jsonify(usersMeasurementsSrv().getAllSrv())
+        response = usersMeasurementsSrv().getAllSrv()
+        return jsonify(response), response["status"]
 
     @measurements.route('/api/measurements/get/<int:id>', methods=['GET'])
     @authorize
     def getById(id):
-        return jsonify(usersMeasurementsSrv().getByIdSrv(id))
+        response = usersMeasurementsSrv().getByIdSrv(id)
+        return jsonify(response), response["status"]
 
     @measurements.route('/api/measurements/post', methods=['POST'])
     @authorize
@@ -23,10 +25,7 @@ class publicationsCtrl():
         data = request.get_json()
         payload = { "user_id": user_id, "date": data.get("date"), "hour": data.get("hour"), "value": data.get("value") }
         save = usersMeasurementsSrv().postSrv(payload)
-        if save:
-            return jsonify(save), 201
-        else:
-            return jsonify(save), 500
+        return jsonify(save), save["status"]
 
     @measurements.route('/api/measurements/put/<int:id>', methods=['PUT'])
     @authorize
@@ -35,16 +34,10 @@ class publicationsCtrl():
         data = request.get_json()
         payload = { "user_id": user_id, "date": data.get("date"), "hour": data.get("hour"), "value": data.get("value") }
         save = usersMeasurementsSrv().putSrv(id, payload)
-        if save:
-            return jsonify(save), 200
-        else:
-            return jsonify(save), 500
+        return jsonify(save), save["status"]
 
     @measurements.route('/api/measurements/delete/<int:id>', methods=['DELETE'])
     @authorize
     def delete(id):
         save = usersMeasurementsSrv().deleteSrv(id)
-        if save:
-            return jsonify(save), 200
-        else:
-            return jsonify(save), 500
+        return jsonify(save), save["status"]

@@ -8,12 +8,14 @@ class usersCtrl():
     @users.route('/api/users/get', methods=['GET'])
     @authorize
     def getAll():
-        return jsonify(usersSrv().getAllSrv())
+        response = usersSrv().getAllSrv()
+        return jsonify(response), response["status"]
 
     @users.route('/api/users/get/<int:id>', methods=['GET'])
     @authorize
     def getById(id):
-        return jsonify(usersSrv().getByIdSrv(id))
+        response = usersSrv().getByIdSrv(id)
+        return jsonify(response), response["status"]
 
     @users.route('/api/users/post', methods=['POST'])
     def post():
@@ -28,34 +30,22 @@ class usersCtrl():
         data = request.get_json()
         payload = { "firstname": data.get("firstname"), "lastname": data.get("lastname"), "email": data.get("email"), "password": data.get("password"), "status": data.get("status") }
         save = usersSrv().putSrv(id, payload)
-        if save:
-            return jsonify(save), 200
-        else:
-            return jsonify(save), 500
+        return jsonify(save), save["status"]
 
     @users.route('/api/users/delete/<int:id>', methods=['DELETE'])
     @authorize
     def delete(id):
         save = usersSrv().deleteSrv(id)
-        if save:
-            return jsonify(save), 200
-        else:
-            return jsonify(save), 500
+        return jsonify(save), save["status"]
 
     @users.route('/api/users/forgot_password/<string:email>', methods=['GET'])
     def forgotPassword(email):
         result = usersSrv().forgotPasswordSrv(email)
-        if result:
-            return jsonify(result), 200
-        else:
-            return jsonify(result), 404
+        return jsonify(result), result["status"]
 
     @users.route('/api/users/change_password', methods=['POST'])
     def changePassword():
         data = request.get_json()
         payload = { "code": data.get("code"), "email": data.get("email"), "newpassword": data.get("newpassword") }
         result = usersSrv().changePasswordSrv(payload)
-        if result:
-            return jsonify(result), 200
-        else:
-            return jsonify(result), 404
+        return jsonify(result), result["status"]

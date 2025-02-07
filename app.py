@@ -1,3 +1,4 @@
+import os
 from flask import Flask
 
 app = Flask(__name__)
@@ -21,4 +22,4 @@ def apply_security_headers(response):
     return response
 
 # settings
-app.secret_key = "my_secret_key"
+app.secret_key = os.getenv("SECRET_KEY")

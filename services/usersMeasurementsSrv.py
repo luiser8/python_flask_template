@@ -1,15 +1,24 @@
 from flask import flash
 from repository.repoSQL import repoSQL
+from middleware.responseHttpUtils import responseHttpUtils
 
 class usersMeasurementsSrv():
     def __init__(self):
         self.query_service = repoSQL('users_measurements', ['id', 'user_id', 'date', 'hour', 'value'])
 
     def getAllSrv(self):
-        return self.query_service.get_all()
+        response =  self.query_service.get_all()
+        if response:
+            return responseHttpUtils().response("Measurements founds successfully", 200, response)
+        else:
+            return responseHttpUtils().response("Error listing measurements", 400, response)
 
     def getByIdSrv(self, id):
-        return self.query_service.get_by_id(id)
+        response = self.query_service.get_by_id(id)
+        if response:
+            return responseHttpUtils().response("Measurements found by id successfully", 200, response)
+        else:
+            return responseHttpUtils().response("Error listing measurements not found", 404, response)
 
     def postSrv(self, payload):
         if payload:
@@ -24,10 +33,9 @@ class usersMeasurementsSrv():
 
             result = self.query_service.insert(meas_data)
             if result:
-                flash('Measurement add')
+                return responseHttpUtils().response("Measurements add successfully", 201, result)
             else:
-                flash('Error at measurement')
-            return result
+                return responseHttpUtils().response("Error add measurements", 400, result)
 
     def putSrv(self, id, payload):
         if payload:
@@ -42,16 +50,14 @@ class usersMeasurementsSrv():
 
             result = self.query_service.update(id, meas_data)
             if result:
-                flash('Measurement upgrade')
+                return responseHttpUtils().response("Measurements update successfully", 200, result)
             else:
-                flash('Error measurement')
-            return result
+                return responseHttpUtils().response("Error update measurements", 400, result)
 
     def deleteSrv(self, id):
         if id:
             result = self.query_service.delete(id)
             if result:
-                flash('Measurement deleted')
+                return responseHttpUtils().response("Measurements deleting successfully", 200, result)
             else:
-                flash('Error delete measurement')
-            return result
+                return responseHttpUtils().response("Error deleting measurements", 400, result)
