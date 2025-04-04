@@ -9,4 +9,4 @@ class homeCtrl():
     def Home():
         app_name = os.getenv("APP_NAME")
         app_name_description = os.getenv("APP_NAME_DESCRIPTION")
-        return render_template('api/api.html', app_name=app_name, app_name_description=app_name_description)
+        return render_template('home/index.html', app_name=app_name, app_name_description=app_name_description)

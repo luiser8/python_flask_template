@@ -61,15 +61,16 @@ class repoSQL:
             cur = pgsqlConn.cursor()
             columns = list(data.keys())
             values = tuple(data[col] for col in columns)
-            stmt = sql.SQL("INSERT INTO {} ({}) VALUES ({})").format(
+            stmt = sql.SQL("INSERT INTO {} ({}) VALUES ({}) RETURNING id").format(
                 sql.Identifier(self.table_name),
                 sql.SQL(',').join(map(sql.Identifier, columns)),
                 sql.SQL(',').join(sql.Placeholder() * len(columns))
             )
             cur.execute(stmt, values)
+            inserted_id = cur.fetchone()[0]
             pgsqlConn.commit()
             cur.close()
-            return True
+            return inserted_id
         except Exception as e:
             print(f"Error: {e}")
             return False

@@ -1,0 +1,24 @@
+<div class="row"></div>
+<div class="col-md-7">
+    <table class="table table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <td scope="col">ID</td>
+                <td scope="col">firstname</td>
+                <td scope="col">lastname</td>
+                <td scope="col">email</td>
+                <td scope="col">Operations</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for u in user %}
+            <tr>
+                <td>{{u['firstname']}}</td>
+                <td>{{u['lastname']}}</td>
+                <td>{{u['email']}}</td>
+                <td>{{u['status']}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

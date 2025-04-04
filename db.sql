@@ -1,4 +1,12 @@
-CREATE DATABASE glucose_tracker_db;
+CREATE DATABASE example_db;
+
+CREATE TABLE rol (
+    id serial PRIMARY KEY,
+    name varchar NOT NULL,
+    status boolean NULL DEFAULT true,
+    createdat TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    updatedat TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP
+);
 
 CREATE TABLE users (
     id serial PRIMARY KEY,
@@ -11,33 +19,23 @@ CREATE TABLE users (
     updatedat TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE users_measurements (
+CREATE TABLE users_rol (
     id serial PRIMARY KEY,
     user_id integer NOT NULL,
-    date varchar NOT NULL,
-    hour varchar NOT NULL,
-    value integer NOT NULL,
-    createdat TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-    updatedat TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users (id)
-);
-
-CREATE TABLE users_auth (
-    id serial PRIMARY KEY,
-    user_id integer NOT NULL UNIQUE,
-    access_token varchar NOT NULL,
-    refresh_token varchar NOT NULL,
-    createdat TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-    updatedat TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users (id)
-);
-
-CREATE TABLE users_forgot_password (
-    id serial PRIMARY KEY,
-    user_id integer NOT NULL,
-    code varchar NOT NULL,
+    rol_id integer NOT NULL,
     status boolean NULL DEFAULT true,
     createdat TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
     updatedat TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users (id)
+    FOREIGN KEY (user_id) REFERENCES users (id),
+    FOREIGN KEY (rol_id) REFERENCES rol (id)
+);
+
+CREATE TABLE resources_rol (
+    id serial PRIMARY KEY,
+    rol_id integer NOT NULL,
+    resources varchar NOT NULL,
+    status boolean NULL DEFAULT true,
+    createdat TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    updatedat TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (rol_id) REFERENCES rol (id)
 );

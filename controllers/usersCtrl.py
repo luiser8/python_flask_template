@@ -1,51 +1,37 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, redirect, render_template, request
 from services.usersSrv import usersSrv
-from middleware.verifyAuth import authorize
 
 users = Blueprint('users', __name__)
 
 class usersCtrl():
-    @users.route('/api/users/get', methods=['GET'])
-    @authorize
+    @users.route('/users/all', methods=['GET'])
     def getAll():
-        response = usersSrv().getAllSrv()
-        return jsonify(response), response["status"]
+        users = usersSrv().getSrv()
+        return render_template('users/index.html', users=users)
 
-    @users.route('/api/users/get/<int:id>', methods=['GET'])
-    @authorize
+    @users.route('/users/id/<int:id>', methods=['GET'])
     def getById(id):
-        response = usersSrv().getByIdSrv(id)
-        return jsonify(response), response["status"]
+        return render_template("/users/userDetail.html", user=usersSrv().getSrv(id))
 
-    @users.route('/api/users/post', methods=['POST'])
+    @users.route('/users/new', methods=['GET'])
+    def new():
+        return render_template('users/newUser.html')
+
+    @users.route('/users/save', methods=['POST'])
     def post():
-        data = request.get_json()
-        payload = { "firstname": data.get("firstname"), "lastname": data.get("lastname"), "email": data.get("email"), "password": data.get("password") }
-        save = usersSrv().postSrv(payload)
-        return jsonify(save), save["status"]
+        payload = { "rol_id": request.form['rol_id'], "firstname": request.form['firstname'], "lastname": request.form['lastname'], "email": request.form['email'], "password": request.form['password'] }
+        usersSrv().postSrv(payload)
+        return redirect("/users/all")
 
-    @users.route('/api/users/put/<int:id>', methods=['PUT'])
-    @authorize
+    @users.route('/users/update/<int:id>', methods=['POST'])
     def put(id):
-        data = request.get_json()
-        payload = { "firstname": data.get("firstname"), "lastname": data.get("lastname"), "email": data.get("email"), "password": data.get("password"), "status": data.get("status") }
-        save = usersSrv().putSrv(id, payload)
-        return jsonify(save), save["status"]
+        payload = { "rol_id": request.form['rol_id'], "firstname": request.form['firstname'], "lastname": request.form['lastname'], "email": request.form['email'], "password": request.form['password'], "status": request.form["status"] }
+        if id and payload:
+            usersSrv().putSrv(id, payload)
+        return redirect("/users/all")
 
-    @users.route('/api/users/delete/<int:id>', methods=['DELETE'])
-    @authorize
+    @users.route('/users/delete/<int:id>', methods=['GET'])
     def delete(id):
-        save = usersSrv().deleteSrv(id)
-        return jsonify(save), save["status"]
-
-    @users.route('/api/users/forgot_password/<string:email>', methods=['GET'])
-    def forgotPassword(email):
-        result = usersSrv().forgotPasswordSrv(email)
-        return jsonify(result), result["status"]
-
-    @users.route('/api/users/change_password', methods=['POST'])
-    def changePassword():
-        data = request.get_json()
-        payload = { "code": data.get("code"), "email": data.get("email"), "newpassword": data.get("newpassword") }
-        result = usersSrv().changePasswordSrv(payload)
-        return jsonify(result), result["status"]
+        if id:
+            usersSrv().deleteSrv(id)
+        return redirect("/users/all")

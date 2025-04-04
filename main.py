@@ -1,12 +1,10 @@
 from app import app
 import os
 from controllers.homeCtrl import home
-from controllers.measurementsCtrl import measurements
 from controllers.usersCtrl import users
 from controllers.authCtrl import auth
 
 app.register_blueprint(home)
-app.register_blueprint(measurements)
 app.register_blueprint(users)
 app.register_blueprint(auth)
 
